@@ -1,0 +1,189 @@
+{
+    "video": {
+        "source": 0,
+        "stop_key": "q"
+    },
+    "cube": {
+        "size": 3
+    },
+    "table": {
+        "start_x": 150,
+        "start_y": 120,
+        "slot_width": 60,
+        "color": [
+            0,
+            255,
+            0
+        ],
+        "line_thickness": 2
+    },
+    "arduino": {
+        "port": "COM3",
+        "baudrate": 9600,
+        "timeout": 0.1
+    },
+    "colors": {
+        "white": {
+            "color_values": [
+                175,
+                178,
+                168
+            ],
+            "code": "W"
+        },
+        "orange": {
+            "color_values": [
+                123,
+                131,
+                186
+            ],
+            "code": "O"
+        },
+        "blue": {
+            "color_values": [
+                142,
+                131,
+                89
+            ],
+            "code": "B"
+        },
+        "yellow": {
+            "color_values": [
+                144,
+                174,
+                180
+            ],
+            "code": "Y"
+        },
+        "red": {
+            "color_values": [
+                121,
+                122,
+                183
+            ],
+            "code": "R"
+        },
+        "green": {
+            "color_values": [
+                103,
+                128,
+                79
+            ],
+            "code": "G"
+        }
+    },
+    "walls": {
+        "up": {
+            "button": "0"
+        },
+        "right": {
+            "button": "1"
+        },
+        "front": {
+            "button": "2"
+        },
+        "down": {
+            "button": "3"
+        },
+        "left": {
+            "button": "4"
+        },
+        "back": {
+            "button": "5"
+        }
+    },
+    "buttons": {
+        "1": {
+            "object": "wall_scanner",
+            "function": "scan_wall",
+            "args": {
+                "wall": "up"
+            }
+        },
+        "2": {
+            "object": "wall_scanner",
+            "function": "scan_wall",
+            "args": {
+                "wall": "right"
+            }
+        },
+        "3": {
+            "object": "wall_scanner",
+            "function": "scan_wall",
+            "args": {
+                "wall": "front"
+            }
+        },
+        "4": {
+            "object": "wall_scanner",
+            "function": "scan_wall",
+            "args": {
+                "wall": "down"
+            }
+        },
+        "5": {
+            "object": "wall_scanner",
+            "function": "scan_wall",
+            "args": {
+                "wall": "left"
+            }
+        },
+        "6": {
+            "object": "wall_scanner",
+            "function": "scan_wall",
+            "args": {
+                "wall": "back"
+            }
+        },
+        "w": {
+            "object": "calibration_manager",
+            "function": "update_calib_color",
+            "args": {
+                "color": "white"
+            }
+        },
+        "o": {
+            "object": "calibration_manager",
+            "function": "update_calib_color",
+            "args": {
+                "color": "orange"
+            }
+        },
+        "b": {
+            "object": "calibration_manager",
+            "function": "update_calib_color",
+            "args": {
+                "color": "blue"
+            }
+        },
+        "y": {
+            "object": "calibration_manager",
+            "function": "update_calib_color",
+            "args": {
+                "color": "yellow"
+            }
+        },
+        "r": {
+            "object": "calibration_manager",
+            "function": "update_calib_color",
+            "args": {
+                "color": "red"
+            }
+        },
+        "g": {
+            "object": "calibration_manager",
+            "function": "update_calib_color",
+            "args": {
+                "color": "green"
+            }
+        },
+        "k": {
+            "object": "kociemba_manager",
+            "function": "create_wall_string"
+        },
+        "s": {
+            "object": "arduino_manager",
+            "function": "send_moves"
+        }
+    }
+}
