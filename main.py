@@ -6,15 +6,14 @@ import json
 import keyboard
 import math
 import kociemba
-from dependency_injector import containers, providers
-from dependency_injector.wiring import Provide, inject
-import sys
 import serial
 import time
 
 
 class ConfigManager:
-    
+    """
+    Reades config file containing all parameters used by program's components.
+    """
     def __init__(self) -> None:
         self.load_config_file()
     
@@ -24,8 +23,6 @@ class ConfigManager:
                 self.config = json.load(self.config_file)
         except FileNotFoundError:
             print("Config not found")
-            # with open("config.json", "w") as self.config_file:#????????????
-            #     pass
     
     def update_config_file(self) -> None:
         self.config.update()
@@ -34,7 +31,9 @@ class ConfigManager:
 
 
 class WindowManager:
-
+    """
+    Creates windows, displaying camera images.
+    """
     def __init__(self, config_manager: ConfigManager) -> None:
         self.read_config(config_manager.config)
         self.capture = cv.VideoCapture(self.video_source)
@@ -56,8 +55,6 @@ class WindowManager:
         self.cube_slots = self.cube_size ** 2
         self.table_color = tuple(config["table"]["color"])
         self.table_line_thickness = config["table"]["line_thickness"]
-        #przerobic tak zeby config_manager sam przypisywal wartosci.
-        #w jsonie beda odnoscniki jakich obiektow dane wartosci dotycza
     
     def show_window(self, **kwargs: List[Dict]) -> None:
         for key, value in kwargs.items():
@@ -132,6 +129,9 @@ class WindowManager:
 
 
 class CalibrationManager:
+    """
+    Tool compensate impact of variable lighting by calculating mean RGB value of plain color walls.
+    """
     
     def __init__(self, config_manager: ConfigManager, window_manager: WindowManager) -> None:
         self.window_manager = window_manager
@@ -156,6 +156,9 @@ class CalibrationManager:
 
 
 class ColorDetector:
+    """
+    Tool used by WallScanner to detect color.
+    """
     
     def __init__(self, calibration_manager: CalibrationManager) -> None:
         self.calibration_manager = calibration_manager
@@ -181,6 +184,9 @@ class ColorDetector:
         return min(distance_dict, key=distance_dict.get)
 
 class WallScanner:
+    """
+    By using camera image projects colors of the rubic cube.
+    """
 
     def __init__(self, window_manager: WindowManager, color_detector: ColorDetector) -> None:
         self.cube_walls = {"up": None,
@@ -210,6 +216,9 @@ class WallScanner:
         
 
 class KociembaManager:
+    """
+    Produces moves necessary to solve a cube.
+    """
     
     def __init__(self, wall_scanner: WallScanner) -> None:
         self.wall_scanner = wall_scanner
@@ -220,7 +229,6 @@ class KociembaManager:
         for key, value in self.wall_scanner.cube_walls.items():
             a = "".join(value)
             self.wall_string += a
-        # print(self.wall_string) 
         print(self.wall_scanner.cube_walls)
     
     def reset_wall_string(self) -> None:
@@ -231,6 +239,9 @@ class KociembaManager:
 
 
 class ArduinoManager():
+    """
+    Maintains connection with Arduino. Methods are being called by KeyboardManager.
+    """
     
     def __init__(self, config_manager: ConfigManager, kociemba_manager: KociembaManager) -> None:
         self.config = config_manager.config
@@ -243,7 +254,6 @@ class ArduinoManager():
         self.port = arduino_config["port"]
         self.baudrate = arduino_config["baudrate"]
         self.timeout = arduino_config["timeout"]
-        # self.move_period = arduino_config["move_period"]
     
     def establish_connection(self) -> None:
         self.connection = serial.Serial(port=self.port,
@@ -255,14 +265,6 @@ class ArduinoManager():
         # for move in self.kociemba_manager.moves:
         self.moves = ["U","U","U","U","U","U","U","U"]
         for move in self.moves:
-            # self.connection.write(self.encode_message(move))
-            # move_availible = False
-            # print(response)
-            # while not move_availible:
-            #     response = self.decode_message(self.connection.readline())
-            #     if response == "move completed":
-            #         move_availible == True
-            
             self.connection.write(self.encode_message(move))
             move_availible = False
             while move_availible == False:
@@ -270,12 +272,6 @@ class ArduinoManager():
                 if data == "move completed":
                     print(data)
                     move_availible = True
-
-            # value = self.write_read(move)
-            # if value != "":
-            #     print(value.decode("utf-8"))
-
-
         print("Sending moves completed.")
             
     def write_read(self, x):
@@ -295,9 +291,8 @@ class ArduinoManager():
 
 class KeyboardManager:
     """
-    #klasa odpowiedzialna za obsluge klawiatury - zczytuje z configa dostepne klawisze i odpowiednie klasy
-    #odbieraja swoje przyciski i wiedza jakich szukac, wtedy nie trzeba latac po configu non stop.
-    #tylko trzeba ogarnac wchodzenie w klucz wyzej mając wartosc dla klucza nizej(przycisku)
+    Class responsible for managing keyborad interrupts caused by user
+    (color calibration, wall scanning, sending moves to arduino).
     """
 
     def __init__(self, 
@@ -337,106 +332,11 @@ class KeyboardManager:
     
     def load_buttons(self) -> Dict:
         return self.config["buttons"].keys()
-
-
-# class RubicSolver():
-#     """Main class. Responsible for managing other subclasses."""
-#     def __init__(self, 
-#                  config_manager: ConfigManager, 
-#                  window_manager: WindowManager, 
-#                  calibration_manager: CalibrationManager, 
-#                  color_detector: ColorDetector,
-#                  wall_scanner: WallScanner,
-#                  kociemba_manager: KociembaManager,
-#                  keyboard_manager: KeyboardManager) -> None:
-#         # zrobic dependency injection
-#         self.config_manager = config_manager
-#         self.window_manager = window_manager(config_manager)
-#         self.calibration_manager = calibration_manager(config_manager, 
-#                                                       window_manager)
-#         self.color_detector = color_detector(calibration_manager)
-#         self.wall_scanner = wall_scanner(window_manager, 
-#                                         color_detector)
-#         self.kociemba_manager = kociemba_manager(wall_scanner)
-#         self.keyboard_manager = keyboard_manager(config_manager, 
-#                                                 calibration_manager,
-#                                                 wall_scanner,
-#                                                 kociemba_manager)
-#         self.stop_key = self.config_manager.config["video"]["stop_key"]
-#         self.run_loop = True
-
-#     def run(self) -> None:
-#        while self.run_loop:
-#            self.window_manager.run()
-#            self.keyboard_manager.run()
-#             # print(self.wall_scanner.cube_walls)
-#            self.check_stop_flag(self.stop_key)
     
-#     def check_stop_flag(self, key: str) -> None:
-#         if cv.waitKey(1) == ord(key):
-#             print(self.wall_scanner.cube_walls)
-#             self.run_loop = False
-
-
-# class Container(containers.DeclarativeContainer):
-
-#     config_manager = providers.Factory(ConfigManager)
-#     window_manager = providers.Factory(WindowManager, 
-#                                        config_manager=config_manager)
-#     calibration_manager = providers.Factory(CalibrationManager,
-#                                             config_manager=config_manager,
-#                                             window_manager = window_manager)
-#     color_detector = providers.Factory(ColorDetector, 
-#                                        calibration_manager=calibration_manager)
-#     wall_scanner = providers.Factory(WallScanner, 
-#                                      window_manager=window_manager,
-#                                      color_detector=color_detector)
-#     kociemba_manager = providers.Factory(KociembaManager, 
-#                                          wall_scanner=wall_scanner)
-#     keyboard_manager = providers.Factory(KeyboardManager, 
-#                                          config_manager=config_manager,
-#                                          calibration_manager=calibration_manager,
-#                                          wall_scanner=wall_scanner,
-#                                          kociemba_manager=kociemba_manager)
-#     rubic_solver = providers.Factory(RubicSolver,
-#                                     config_manager=config_manager, 
-#                                     window_manager=window_manager, 
-#                                     calibration_manager=calibration_manager, 
-#                                     color_detector=color_detector,
-#                                     wall_scanner=wall_scanner,
-#                                     kociemba_manager=kociemba_manager,
-#                                     keyboard_manager=keyboard_manager)
-
-
-# @inject
-# def main(
-#     config_manager: ConfigManager = Provide[Container.config_manager],
-#     window_manager: WindowManager = Provide[Container.window_manager],
-#     calibration_manager: CalibrationManager = Provide[Container.calibration_manager],
-#     color_detector: ColorDetector = Provide[Container.color_detector],
-#     wall_scanner: WallScanner = Provide[Container.wall_scanner],
-#     kociemba_manager: KociembaManager = Provide[Container.kociemba_manager],
-#     keyboard_manager: KeyboardManager = Provide[Container.keyboard_manager],
-#     rubic_solver: RubicSolver = Provide[Container.rubic_solver]
-#     ) -> None:
-#     rubic_solver.run()
-# # def main():
-# #     print("chuj")
-
-# if __name__ == '__main__':
-#     container = Container()
-#     container.init_resources()
-#     container.wire(modules=[__name__])
-#     # a = main(*sys.argv[1:])
-#     main()
-
-
-
 
 class RubicSolver():
     """Main class. Responsible for managing other subclasses."""
     def __init__(self) -> None:
-        # zrobic dependency injection
         self.config_manager = ConfigManager()
         self.window_manager = WindowManager(self.config_manager)
         self.calibration_manager = CalibrationManager(self.config_manager, 
@@ -458,7 +358,6 @@ class RubicSolver():
        while self.run_loop:
            self.window_manager.run()
            self.keyboard_manager.run()
-            # print(self.wall_scanner.cube_walls)
            self.check_stop_flag(self.stop_key)
     
     def check_stop_flag(self, key: str) -> None:
