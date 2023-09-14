@@ -20,76 +20,56 @@
     "arduino": {
         "port": "COM3",
         "baudrate": 9600,
-        "timeout": 0.1
+        "timeout": 0.5
     },
     "colors": {
         "white": {
             "color_values": [
-                175,
-                178,
-                168
+                103,
+                101,
+                92
             ],
             "code": "W"
         },
         "orange": {
             "color_values": [
-                123,
-                131,
-                186
+                34,
+                47,
+                95
             ],
             "code": "O"
         },
         "blue": {
             "color_values": [
-                142,
-                131,
-                89
+                89,
+                61,
+                15
             ],
             "code": "B"
         },
         "yellow": {
             "color_values": [
-                144,
-                174,
-                180
+                51,
+                87,
+                81
             ],
             "code": "Y"
         },
         "red": {
             "color_values": [
-                121,
-                122,
-                183
+                29,
+                27,
+                74
             ],
             "code": "R"
         },
         "green": {
             "color_values": [
-                103,
-                128,
-                79
+                36,
+                52,
+                7
             ],
             "code": "G"
-        }
-    },
-    "walls": {
-        "up": {
-            "button": "0"
-        },
-        "right": {
-            "button": "1"
-        },
-        "front": {
-            "button": "2"
-        },
-        "down": {
-            "button": "3"
-        },
-        "left": {
-            "button": "4"
-        },
-        "back": {
-            "button": "5"
         }
     },
     "buttons": {

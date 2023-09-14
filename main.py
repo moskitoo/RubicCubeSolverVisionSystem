@@ -262,9 +262,9 @@ class ArduinoManager():
     
     def send_moves(self) -> None:
         move_availible = True
-        # for move in self.kociemba_manager.moves:
-        self.moves = ["U","U","U","U","U","U","U","U"]
-        for move in self.moves:
+        for move in self.kociemba_manager.moves:
+        # self.moves = ["U2","U","U2","U","U2","U","U2","U"]
+        # for move in self.moves:
             self.connection.write(self.encode_message(move))
             move_availible = False
             while move_availible == False:
