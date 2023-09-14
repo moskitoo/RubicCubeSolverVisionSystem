@@ -19,7 +19,6 @@ Before running the program, make sure you have the following prerequisites insta
 
 You can install the required Python libraries using pip:
 
-bashCopy code
 
 `pip install opencv-python numpy keyboard kociemba pyserial`
 
@@ -28,19 +27,16 @@ Usage
 
 1.  Clone the repository:
 
-bashCopy code
 
 `git clone <repository_url>`
 
 1.  Navigate to the repository directory:
 
-bashCopy code
 
 `cd <repository_directory>`
 
 1.  Run the `main.py` script:
 
-bashCopy code
 
 `python main.py`
 
